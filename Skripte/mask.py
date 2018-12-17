@@ -1,20 +1,32 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import json
 import warnings
+from skimage.draw import polygon
+from indexOfSubstring import indexOfSubstring
+import fileScripts as fs
+
 warnings.filterwarnings('ignore')
-import os
 
-x_l = np.load(os.path.join(os.path.dirname(__file__), 'X.npy'))
-Y_l = np.load(os.path.join(os.path.dirname(__file__), 'Y.npy'))
-img_size = 64
-plt.subplot(1, 2, 1)
-plt.imshow(x_l[260].reshape(img_size, img_size))
-plt.axis('off')
-plt.subplot(1, 2, 2)
-plt.imshow(x_l[900].reshape(img_size, img_size))
-plt.axis('off')
+regionsOfInterestJSON = open('/home/irhad/Desktop/POOS/Dataset/RegionsOfInterest/Sign-L.json')
+annotationStrings = regionsOfInterestJSON.readlines()
 
-plt.show()
+for jsonString in annotationStrings:
+    jsonData = json.loads(jsonString)
+    maskPath = indexOfSubstring(jsonData['content'], 'IMG')
 
+    mask = np.zeros([100,100,3], dtype=int)
+    points = jsonData['annotation'][0]['points']
+    poly = []
+    for point in points:
+        poly.append((int(point[0] * 100), int(point[1] * 100)))
+    poly = np.array(poly)
+    rr, cc = polygon(poly[:,0], poly[:,1], mask.shape)
+    mask[rr,cc,:] = (255, 255, 255)
+
+    fs.saveImage(mask[:, :, :], '/home/irhad/Desktop/POOS/Dataset/Masks/' + maskPath)
+
+    #plt.imshow(mask)
+    #break
+#plt.show()
 #def maskImage(originalPath, maskPath):
