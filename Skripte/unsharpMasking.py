@@ -11,12 +11,10 @@ for i in range(0,10):
         
         lap = cv2.Laplacian(image, cv2.CV_64F)
         
-        print(lap)
         
         sharpImage = image - 0.1*lap
         sharpImage = sharpImage.astype(numpy.uint8)
         
-        print(sharpImage)
 
         split = filename.split('\\')
 
