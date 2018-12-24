@@ -13,9 +13,9 @@ from PIL import  ImageChops
 
 warnings.filterwarnings('ignore')
 
-def createMasks():
+def createMasks(jsonPath, masksFolder):
 
-    regionsOfInterestJSON = open('/home/irhad/Desktop/POOS/Dataset/RegionsOfInterest/Sign-L.json')
+    regionsOfInterestJSON = open(jsonPath)
     annotationStrings = regionsOfInterestJSON.readlines()
 
     for jsonString in annotationStrings:
@@ -31,12 +31,9 @@ def createMasks():
         rr, cc = polygon(poly[:,0], poly[:,1], mask.shape)
         mask[rr,cc,:] = (255, 255, 255)
 
-        fs.saveImage(mask[:, :, :], '/home/irhad/Desktop/POOS/Dataset/Masks/' + maskPath, 1, (0, 2))
+        fs.saveImage(mask[:, :, :], masksFolder + maskPath, 1, (0, 2))
 
-def maskImages():
-    maskPath = '/home/irhad/Desktop/POOS/Dataset/Masks/'
-    originalImagePath = '/home/irhad/Desktop/POOS/Dataset/Images/'
-    maskedImagePath = '/home/irhad/Desktop/POOS/Dataset/MaskedImages/'
+def maskImages(maskPath, originalImagePath, maskedImagePath):
 
     for i in range(0,10):
         for filename in os.listdir(originalImagePath + str(i)):
@@ -55,8 +52,8 @@ def maskImages():
             #plt.imshow(result)
             #plt.show()     
 
-#createMasks()
-maskImages()
+#createMasks('/home/irhad/Desktop/POOS/Dataset/RegionsOfInterest/Sign-L.json', '/home/irhad/Desktop/POOS/Dataset/Masks/')
+maskImages('/home/irhad/Desktop/POOS/Dataset/Masks/', '/home/irhad/Desktop/POOS/Dataset/Images/', '/home/irhad/Desktop/POOS/Dataset/MaskedImages/')
     #plt.imshow(mask)
     #break
 #plt.show()
